@@ -17,9 +17,7 @@ jobs:
           with:
             result-encoding: string
             script: |
-                console.log('Jake context', context);
-                const str = context.payload.comment.body;
-                const wsStr = str.replace('/prefix', '').trim().split(',');
-                return wsStr.join(' ');
+                const script = require('${{ github.workspace }}/.github/scripts/prefix-comment-parser.js')
+                script(context);
         - name: Get Results
           run: echo "${{steps.workspace-parser.outputs.result}}"

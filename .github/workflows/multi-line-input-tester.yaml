@@ -1,23 +1,24 @@
-name: Multi Line Test
-
-run-name: 'TEST'
+name: Testing
 
 on:
-  workflow_dispatch:
-    inputs:
-      app:
-        description: Test Input
-        required: true
-        type: choice
-        options: |
-            foo
-            bar
-            baz
+  issue_comment:
+    types: [created]
 
 jobs:
-    test:
-        runs-on: [linux]
-        environment: prod
+    setup:
+        if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/prefix') }}
+        runs-on: ubuntu-latest
         steps:
-            - name: 'Echo'
-              run: echo "hello world"
+        - uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+        - uses: actions/github-script@v7
+          id: workspace-parser
+          with:
+            result-encoding: string
+            script: |
+                const str = github.event.comment.body;
+                const wsStr = str.replace('/prefix', '').trim().split(',');
+                return wsStr.join(' ');
+        - name: Get Results
+          run: echo "${{steps.workspace-parser.outputs.result}}"

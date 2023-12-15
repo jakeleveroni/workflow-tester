@@ -21,15 +21,33 @@ jobs:
                 const wsStr = str.replace('/prefix', '').trim().split(',').filter(x => x.length !== 0).map(x => x.trim());
 
                 if (!wsStr || wsStr.length === 0) {
-                  core.setFailed(`No ws names provided. Please be sure the format of your comment is correct.`)
+                  core.setFailed(`No ws names provided. Please be sure the format of your comment is correct.`);
+                  github.rest.issues.addLabels({
+                    issue_number: context.payload.comment.id,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    labels: ['Failure', 'No Workspaces']
+                  });
                 }
 
                 // validate string
                 const allowed = ['one', 'two', 'three'];
                 if (!wsStr.every(x => allowed.includes(x))) {
-                  core.setFailed(`Invalid ws name provided, valid options are "${allowed.join(', ')}", provided: "${wsStr.join(', ')}"`)
+                  core.setFailed(`Invalid ws name provided, valid options are "${allowed.join(', ')}", provided: "${wsStr.join(', ')}"`);
+                  github.rest.issues.addLabels({
+                    issue_number: context.payload.comment.id,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    labels: ['Failure', 'Invalid Workspaces']
+                  });
                 }
 
+                github.rest.issues.addLabels({
+                  issue_number: context.payload.comment.id,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  labels: ['Success']
+                });
                 return wsStr.map(x => x.trim()).join(' ');
         - name: Get Results
           run: echo "${{steps.workspace-parser.outputs.result}}"

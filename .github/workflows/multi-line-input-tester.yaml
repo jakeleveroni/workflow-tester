@@ -18,4 +18,6 @@ jobs:
     test:
         runs-on: [linux]
         environment: prod
-    run: echo "hello"
+        steps:
+            - name: 'Echo'
+              run: echo "hello world"

@@ -18,7 +18,7 @@ jobs:
             result-encoding: string
             script: |
                 console.log('Jake context', context);
-                const str = github.event.comment.body;
+                const str = context.payload.comment.body;
                 const wsStr = str.replace('/prefix', '').trim().split(',');
                 return wsStr.join(' ');
         - name: Get Results

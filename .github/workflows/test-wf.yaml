@@ -17,7 +17,6 @@ jobs:
           with:
             result-encoding: string
             script: |
-                console.log('Jake context', context);
                 const str = context.payload.comment.body;
                 const wsStr = str.replace('/prefix', '').trim().split(',').filter(x => x.length !== 0).map(x => x.trim());
 
@@ -26,9 +25,9 @@ jobs:
                 }
 
                 // validate string
-                const allowed = ['jake', 'one', 'two', 'three'];
+                const allowed = ['one', 'two', 'three'];
                 if (!wsStr.every(x => allowed.includes(x))) {
-                  core.setFailed(`Invalid ws name provided, valid options are "${allowed.join(' ')}"", provided: "${wsStr.join(' ')}"`)
+                  core.setFailed(`Invalid ws name provided, valid options are "${allowed.join(', ')}", provided: "${wsStr.join(', ')}"`)
                 }
 
                 return wsStr.map(x => x.trim()).join(' ');

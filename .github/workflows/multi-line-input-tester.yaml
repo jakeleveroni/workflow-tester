@@ -1,0 +1,21 @@
+name: Multi Line Test
+
+run-name: 'TEST'
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: Test Input
+        required: true
+        type: choice
+        options: |
+            foo
+            bar
+            baz
+
+jobs:
+    test:
+        runs-on: [linux]
+        environment: prod
+    run: echo hello

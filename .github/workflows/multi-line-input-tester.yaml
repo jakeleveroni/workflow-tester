@@ -18,4 +18,4 @@ jobs:
     test:
         runs-on: [linux]
         environment: prod
-    run: echo hello
+    run: echo "hello"

@@ -22,11 +22,11 @@ jobs:
 
                 if (!wsStr || wsStr.length === 0) {
                   core.setFailed(`No ws names provided. Please be sure the format of your comment is correct.`);
-                  github.rest.issues.addLabels({
-                    issue_number: context.payload.comment.id,
+                  github.rest.pulls.updateReviewComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    labels: ['Failure', 'No Workspaces']
+                    comment_id: context.payload.comment.id,
+                    body: `${str}\n\n:fire: No workspace provided.`,
                   });
                 }
 
@@ -34,19 +34,19 @@ jobs:
                 const allowed = ['one', 'two', 'three'];
                 if (!wsStr.every(x => allowed.includes(x))) {
                   core.setFailed(`Invalid ws name provided, valid options are "${allowed.join(', ')}", provided: "${wsStr.join(', ')}"`);
-                  github.rest.issues.addLabels({
-                    issue_number: context.payload.comment.id,
+                  github.rest.pulls.updateReviewComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    labels: ['Failure', 'Invalid Workspaces']
+                    comment_id: context.payload.comment.id,
+                    body: `${str}\n\n:fire: Invalid workspace provided.`,
                   });
                 }
 
-                github.rest.issues.addLabels({
-                  issue_number: context.payload.comment.id,
+                github.rest.pulls.updateReviewComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  labels: ['Success']
+                  comment_id: context.payload.comment.id,
+                  body: `${str}\n\n:popcorn: Deployment complete!`,
                 });
                 return wsStr.map(x => x.trim()).join(' ');
         - name: Get Results

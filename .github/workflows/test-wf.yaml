@@ -19,14 +19,20 @@ jobs:
             script: |
                 const str = context.payload.comment.body;
                 const wsStr = str.replace('/prefix', '').trim().split(',').filter(x => x.length !== 0).map(x => x.trim());
-                console.log('jake', context);
+                const req = {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: context.payload.comment.id,
+                }
+
+                console.log('jake context', context);
+                console.log('jake req obj', req)
+                
                 if (!wsStr || wsStr.length === 0) {
                   core.setFailed(`No ws names provided. Please be sure the format of your comment is correct.`);
-                  github.rest.pulls.updateReviewComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    comment_id: context.payload.comment.id,
-                    body: `${str}\n\n:fire: No workspace provided.`,
+                  github.rest.issues.updateComment({
+                    ...req,
+                    body: `${str}\n\n:fire: No workspace provided!`,
                   });
                 }
 
@@ -34,19 +40,15 @@ jobs:
                 const allowed = ['one', 'two', 'three'];
                 if (!wsStr.every(x => allowed.includes(x))) {
                   core.setFailed(`Invalid ws name provided, valid options are "${allowed.join(', ')}", provided: "${wsStr.join(', ')}"`);
-                  github.rest.pulls.updateReviewComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    comment_id: context.payload.comment.id,
-                    body: `${str}\n\n:fire: Invalid workspace provided.`,
+                  github.rest.issues.updateComment({
+                    ...req,
+                    body: `${str}\n\n:fire: Invalid workspace provided!`,
                   });
                 }
 
-                github.rest.pulls.updateReviewComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: context.payload.comment.id,
-                  body: `${str}\n\n:popcorn: Deployment complete!`,
+                github.rest.issues.updateComment({
+                  ...req,
+                  body: `${str}\n\n:popcorn: Deployment Complete!`,
                 });
                 return wsStr.map(x => x.trim()).join(' ');
         - name: Get Results

@@ -1,4 +1,5 @@
 name: Testing
+permissions: write-all
 
 on:
   issue_comment:

@@ -19,7 +19,7 @@ jobs:
             script: |
                 const str = context.payload.comment.body;
                 const wsStr = str.replace('/prefix', '').trim().split(',').filter(x => x.length !== 0).map(x => x.trim());
-
+                console.log('jake', context);
                 if (!wsStr || wsStr.length === 0) {
                   core.setFailed(`No ws names provided. Please be sure the format of your comment is correct.`);
                   github.rest.pulls.updateReviewComment({
